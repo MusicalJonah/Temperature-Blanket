@@ -3,7 +3,7 @@
 This tool can be used to make a spreadsheet of the average temperatures on a given day to make a temperature blanket.
 # Setup
 ### Google
-To keep track of your data, we will use a Google sheet. To begin, create a google sheet, and add the following to the first row:
+To keep track of your data, we will use a Google sheet. To begin, create a Google sheet, and add the following to the first row:
 |**Month**|**Day**|**Temperature**|**Color**|
 |--|--|--|--|
 ||
