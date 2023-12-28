@@ -4,13 +4,22 @@ from oauth2client.service_account import ServiceAccountCredentials
 import requests
 import json
 import os
+import configparser
 
 months = [0, "January","February","March","April","May","June","July","August","September","October","November","December"]
 
+#Read the config file
+config = configparser.ConfigParser()
+config.read('config.conf')
+
+location = config['DEFAULT']['Location']
+weather_api_key = config['DEFAULT']['WeatherApiKey']
+color_list = config['DEFAULT']['ColorList'].split(',')
+google_json_path = config['DEFAULT']['GoogleJsonPath']
+sheet_name = config['DEFAULT']['SheetName']
+
 # Get the Average Temperature
-def temp():
-    apikey=(os.getenv('Weather_API'))
-    location = "19301"
+def temp(location=location, apikey=weather_api_key):
     headers = {"accept": "application/json"}
     url = "http://api.weatherapi.com/v1/forecast.json?key="+ apikey +"&q="+ location +"&days=1&aqi=no&alerts=no"
     response = requests.get(url, headers=headers)
@@ -21,8 +30,7 @@ def temp():
     return int(avgTemp)
 
 #Figure out what color we need
-def color(temperature):
-    colors = ['White', 'Cyan', 'Varsity Blue', 'Slime', 'Forest Green', 'Varsity Gold', 'Orange', 'Magenta']
+def color(temperature, colors=color_list):
     if temperature < 20:
         return colors[0]
     elif temperature < 30:
@@ -49,9 +57,9 @@ color = color(temp)
 # GOOGLE STUFF
 scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('./google.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(google_json_path, scope)
 client = gspread.authorize(creds)
-sheet = client.open('Temperature Blanket 2024').sheet1
+sheet = client.open(sheet_name).sheet1
 
 # Append the data to the last row
 data = [month, day, temp, color]
